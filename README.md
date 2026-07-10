@@ -1,17 +1,123 @@
-# 安裝步驟
+# Neovim 設定（LazyVim）
 
-## 1. 安裝
+以 LazyVim 為基礎，建置 PHP／Vue／TypeScript／Go 的 VSCode 等級 IDE 環境：
+LSP 補全與跳轉、存檔自動格式化、ESLint、偵錯（DAP）、測試面板（neotest）、Claude Code 整合。
 
-1. 複製設定：
-   ```bash
-   git clone https://github.com/dq042000/nvim-config.git ~/.config/nvim
-   ```
-2. 啟動 Neovim：
-   ```bash
-   nvim
-   ```
-3. 第一次啟動時，LazyVim 會自動安裝所需相依套件。
-4. 依照提示完成額外設定。
+## 安裝步驟
+
+### 1. 系統依賴
+
+| 工具 | 用途 | 安裝方式 |
+|---|---|---|
+| Neovim 0.10+ | — | 官方套件或 PPA |
+| git、gcc | 外掛安裝、treesitter 編譯 | `sudo apt install git build-essential` |
+| Node.js / npm | 多數 LSP 是 npm 套件 | nvm |
+| Go | gopls、delve | 官方安裝包 |
+| PHP | intelephense、phpcs | `sudo apt install php` |
+| ripgrep | 全域搜尋（`<leader>/`） | `sudo apt install ripgrep` |
+| fzf | picker | `git clone https://github.com/junegunn/fzf ~/.fzf && ~/.fzf/install` |
+| fd | 檔案搜尋 | [官方 release](https://github.com/sharkdp/fd/releases) binary 放 `~/.local/bin/fd` |
+| lazygit | Git 介面（`<leader>gg`） | [官方 release](https://github.com/jesseduffield/lazygit/releases) binary 放 `~/.local/bin/lazygit` |
+| claude CLI | claudecode.nvim 依賴 | `npm install -g @anthropic-ai/claude-code` |
+
+### 2. 複製設定並啟動
+
+```bash
+git clone https://github.com/dq042000/nvim-config.git ~/.config/nvim
+nvim
+```
+
+第一次啟動全自動：bootstrap lazy.nvim → 依 `lazy-lock.json` 安裝所有外掛 → 編譯 treesitter parser。
+若外掛版本不一致，執行 `:Lazy restore` 對齊 lock 檔。
+
+Mason 工具（LSP、formatter、debug adapter）會在開啟對應檔案時自動安裝，可開 `:Mason` 查看進度。
+
+### 3. 手動降版 vue-language-server（必要）
+
+Mason 預設會裝 3.x，但與現行 LazyVim 的 hybridMode 設定不相容，啟動會崩潰
+（`ts.server.protocol` undefined）。必須鎖定 2.2.10：
+
+```
+:MasonInstall vue-language-server@2.2.10
+```
+
+> 之後若 `:Lazy update` 更新 LazyVim 到支援 vue_ls 3.x 的版本，才可同步升級。
+> 在那之前不要手動 `:MasonInstall vue-language-server`（會裝回 3.x）。
+
+### 4. PHP 偵錯：Xdebug（系統層）
+
+```bash
+sudo apt install php-xdebug
+sudo tee /etc/php/*/mods-available/xdebug.ini <<'EOF'
+zend_extension=xdebug.so
+xdebug.mode=develop,debug
+xdebug.start_with_request=trigger
+EOF
+```
+
+`start_with_request=trigger`：只有帶 `XDEBUG_TRIGGER` 環境變數（CLI）或
+`XDEBUG_SESSION` cookie（瀏覽器）時才連偵錯器，平常執行不受影響。
+
+驗證：`php -i | grep xdebug.mode` 應顯示 `develop,debug`。
+
+### 5. 驗證安裝
+
+- `:checkhealth` — 檢查缺漏的依賴
+- `:LazyExtras` — 確認 extras 已啟用（見下表）
+- 開一個 `.php` / `.vue` / `.go` 檔，確認 LSP 掛載（`:LspInfo`）
+
+## 已啟用的 extras（`lazyvim.json`）
+
+| 分類 | Extras |
+|---|---|
+| 語言 | php（intelephense）、vue、typescript（vtsls）、go、json、yaml、docker、markdown |
+| 格式化／檢查 | formatting.prettier、linting.eslint |
+| 偵錯／測試 | dap.core、test.core |
+| 編輯 | editor.inc-rename |
+
+自訂外掛（`lua/plugins/`）：
+
+- `test.lua` — neotest 掛載 PHPUnit 與 Vitest adapter
+- `claudecode.lua` — Claude Code 整合
+- `transparent.lua` — 背景透明
+
+## 常用按鍵
+
+`<leader>` 為空格。
+
+| 按鍵 | 功能 |
+|---|---|
+| `<leader>e` | 檔案樹（neo-tree） |
+| `<leader><space>` | 快速開檔 |
+| `<leader>/` | 全域搜尋 |
+| `<leader>gg` | lazygit |
+| `<leader>cr` | 重新命名（即時預覽） |
+| `<leader>db` / `<leader>dc` | 中斷點／啟動偵錯 |
+| `<leader>tt` | 跑當前檔案測試 |
+| `sh` `sj` `sk` `sl` | 視窗間移動 |
+| `ss` / `sv` | 水平／垂直分割 |
+
+### Claude Code（`<leader>a`）
+
+| 按鍵 | 功能 |
+|---|---|
+| `<leader>ac` | 開／關 Claude 側欄 |
+| `<leader>af` | 跳到 Claude 視窗 |
+| `<leader>ab` | 把目前檔案加入 context |
+| `<leader>as` | （visual）送選取範圍給 Claude |
+| `<leader>aa` / `<leader>ad` | 接受／拒絕 diff |
+| `<leader>ar` / `<leader>aC` | resume／continue 對話 |
+
+側欄是終端機模式：快速連按兩下 `Esc` 回 normal mode（單按會送給 Claude 當中斷），
+或按 `<C-w>h` 直接跳回編輯視窗。
+
+### PHP 偵錯流程
+
+1. `<leader>db` 下中斷點
+2. `<leader>dc` 選「Listen for Xdebug」
+3. 終端機執行 `XDEBUG_TRIGGER=1 php script.php`（網頁請求帶 `XDEBUG_SESSION` cookie）
+
+Go 偵錯不需額外設定，`<leader>dc` 直接可用（delve）。
 
 ## 相關連結
 
@@ -20,5 +126,6 @@
 
 ## 常見問題
 
-- 若遇到相依套件安裝失敗，請確認網路連線或手動安裝。
+- 相依套件安裝失敗：確認網路連線，或開 `:Lazy` / `:Mason` 手動重試。
+- Vue LSP 啟動就崩潰：vue-language-server 被升到 3.x 了，重跑步驟 3 降回 2.2.10。
 - 設定檔路徑預設為 `~/.config/nvim`。
