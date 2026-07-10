@@ -3,6 +3,8 @@
 -- Add any additional options here
 local opt = vim.opt
 
+vim.g.lazyvim_php_lsp = "intelephense" -- PHP LSP 使用 intelephense（預設為 phpactor）
+
 vim.opt.clipboard = "unnamedplus" -- 讓 Vim 使用系統剪貼簿（與系統剪貼簿同步）
 
 -- 設定 Leader 鍵為空格
