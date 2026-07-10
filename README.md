@@ -66,6 +66,23 @@ EOF
 - `:LazyExtras` — 確認 extras 已啟用（見下表）
 - 開一個 `.php` / `.vue` / `.go` 檔，確認 LSP 掛載（`:LspInfo`）
 
+## 多台電腦同步外掛版本
+
+外掛版本由 `lazy-lock.json` 鎖定（記錄每個外掛的 commit），此檔已納入版本控制，
+因此所有電腦都能還原出一致的外掛環境。工作流程：
+
+1. **升級外掛（只在一台電腦做）**：`:Lazy update` 更新到上游最新版並改寫 lock 檔，
+   確認沒問題後 commit `lazy-lock.json` 並 push。
+2. **其他電腦同步**：`git pull` 之後執行 `:Lazy restore`，外掛就會對齊 lock 檔記錄的版本。
+   不想開編輯器可直接在終端機執行：
+
+   ```bash
+   nvim --headless "+Lazy! restore" +qa
+   ```
+
+兩個指令的差別：`restore` 同步到 **lock 檔版本**（日常用這個）；
+`update` 更新到**上游最新版**（主動升級才用，會改寫 lock 檔）。
+
 ## 已啟用的 extras（`lazyvim.json`）
 
 | 分類 | Extras |
@@ -136,4 +153,6 @@ Go 偵錯不需額外設定，`<leader>dc` 直接可用（delve）。
 
 - 相依套件安裝失敗：確認網路連線，或開 `:Lazy` / `:Mason` 手動重試。
 - Vue LSP 啟動就崩潰：vue-language-server 被升到 3.x 了，重跑步驟 3 降回 2.2.10。
+- 按 `Ctrl+b` 出現 `module 'snacks.zen' not found`：snacks.nvim 版本太舊
+  （`zen` 模組是 2024-11 之後才加入的功能），執行 `:Lazy restore` 對齊 lock 檔即可。
 - 設定檔路徑預設為 `~/.config/nvim`。
