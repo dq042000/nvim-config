@@ -21,3 +21,8 @@ keymap.set("n", "sh", "<C-w>h") -- 使用 `sh` 向左移動視窗
 keymap.set("n", "sk", "<C-w>k") -- 使用 `sk` 向上移動視窗
 keymap.set("n", "sj", "<C-w>j") -- 使用 `sj` 向下移動視窗
 keymap.set("n", "sl", "<C-w>l") -- 使用 `sl` 向右移動視窗
+
+-- 視窗滿版切換（取代 vim 預設的 Ctrl+B 往上翻頁）
+keymap.set("n", "<C-b>", function()
+  Snacks.zen.zoom()
+end, { desc = "Toggle Zoom" })
