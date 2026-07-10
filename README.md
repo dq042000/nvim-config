@@ -88,19 +88,27 @@ EOF
 | 按鍵 | 功能 |
 |---|---|
 | `<leader>e` | 檔案樹（neo-tree） |
-| `<leader><space>` | 快速開檔 |
-| `<leader>/` | 全域搜尋 |
+| `<leader><space>` | 快速開檔（VSCode 的 Ctrl+P） |
+| `<leader>/` | 全域搜尋（VSCode 的 Ctrl+Shift+F） |
+| `<leader>,` | 開啟中的 buffer 清單 |
+| `Shift+h` / `Shift+l` | 上一個／下一個 buffer |
 | `<leader>gg` | lazygit |
 | `<leader>cr` | 重新命名（即時預覽） |
 | `<leader>db` / `<leader>dc` | 中斷點／啟動偵錯 |
 | `<leader>tt` | 跑當前檔案測試 |
+| `Ctrl+b` | 視窗滿版 ⇄ 還原（自訂，取代預設翻頁；翻頁用 Ctrl+u） |
 | `sh` `sj` `sk` `sl` | 視窗間移動 |
 | `ss` / `sv` | 水平／垂直分割 |
+| `<leader>qq` | 離開 nvim（關閉全部視窗） |
+
+> `Ctrl+b` 為讓出全域綁定，已停用 noice（捲動 hover 文件）與
+> Neo-tree（scroll_preview）各自的 `Ctrl+b`（見 `lua/plugins/noice.lua`、`neo-tree.lua`）。
 
 ### Claude Code（`<leader>a`）
 
 | 按鍵 | 功能 |
 |---|---|
+| `Alt+r` | 開／關 Claude 側欄（自訂，側欄內也可直接按，不用脫離終端機模式） |
 | `<leader>ac` | 開／關 Claude 側欄 |
 | `<leader>af` | 跳到 Claude 視窗 |
 | `<leader>ab` | 把目前檔案加入 context |
