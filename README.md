@@ -83,6 +83,23 @@ EOF
 兩個指令的差別：`restore` 同步到 **lock 檔版本**（日常用這個）；
 `update` 更新到**上游最新版**（主動升級才用，會改寫 lock 檔）。
 
+### `git pull` 後 `lazyvim.json` 又出現變更？
+
+`lazyvim.json` 不是純手寫設定檔，LazyVim 每次啟動都會自動回寫兩個欄位：
+
+- `version` — lazyvim.json 的格式版本，跟著安裝的 LazyVim 走
+- `news.NEWS.md` — 已讀過的 LazyVim NEWS.md 檔案大小
+
+只要兩台電腦安裝的 LazyVim 版本不同，這兩個值就不一樣，誰開 nvim
+誰就把檔案改成自己那版的值，造成 diff 改來改去。解法：
+
+1. 在每台電腦 `git pull` 後執行 `:Lazy restore`，讓 LazyVim 版本對齊 lock 檔
+2. 開一次 nvim 讓 `lazyvim.json` 更新，若有變更就 commit 推上去
+
+之後所有電腦的 LazyVim 版本一致，`lazyvim.json` 就不會再被自動改動。
+執行過 `:Lazy update` 升級 LazyVim 時，記得把 `lazy-lock.json` 和
+`lazyvim.json` **一起 commit**，其他電腦 pull + restore 後才不會又漂移。
+
 ## 已啟用的 extras（`lazyvim.json`）
 
 | 分類 | Extras |
