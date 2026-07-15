@@ -227,3 +227,11 @@ Go 偵錯不需額外設定，`<leader>dc` 直接可用（delve）。
   ```
 
 - 設定檔路徑預設為 `~/.config/nvim`。
+
+## 其他電腦首次同步（2026-07-15 hook 上線後）
+
+```bash
+git pull
+nvim --headless "+Lazy! restore" +qa   # 這次 pull 時 hook 還沒啟用，手動跑一次
+git config core.hooksPath .githooks    # 啟用 hook，之後 pull 就全自動
+```
