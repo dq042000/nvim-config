@@ -84,6 +84,30 @@ EOF
 兩個指令的差別：`restore` 同步到 **lock 檔版本**（日常用這個）；
 `update` 更新到**上游最新版**（主動升級才用，會改寫 lock 檔）。
 
+### 自動化：pull 後自動 restore（post-merge hook）
+
+repo 內附 `.githooks/post-merge`：`git pull` 後若 `lazy-lock.json` 有變更，
+自動執行 `Lazy! restore` 對齊外掛本體，並偵測「lock 檔被回寫」的降級污染
+（自動還原重試，失敗時警告勿 commit）。每台電腦啟用一次：
+
+```bash
+git config core.hooksPath .githooks
+```
+
+注意 `git pull --rebase` 不會觸發 post-merge，rebase 後請手動跑 restore。
+
+### 沒跑 update，`lazy-lock.json` 卻出現大量變更？
+
+在外掛仍是舊版的電腦上開 nvim（例如 pull 後忘了 restore），lazy.nvim
+安裝完缺少的外掛後，會用「本機已安裝的舊版本」回寫 lock 檔——
+這是**降級污染**，不是升級。commit 推上去會換另一台電腦開檔噴錯，
+形成兩台電腦互相污染的循環（實例：e5aeae9 把 LazyVim 16 降回 14.15，
+但 nvim-treesitter 仍鎖 main 重寫版，開檔即噴 `query_predicates` 錯誤）。
+
+處理方式：`git checkout -- lazy-lock.json` 丟掉回寫，再跑 `:Lazy restore`。
+原則：**只有主動跑過 `:Lazy update` 才 commit lock 檔**，commit 前確認
+diff 方向是升級而非降級。
+
 ### LazyVim 大版本升級要 update 兩次
 
 `:Lazy update` 執行當下，外掛規格來自「當時已安裝的舊版 LazyVim」。

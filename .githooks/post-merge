@@ -1,0 +1,27 @@
+#!/bin/sh
+# git pull（merge / fast-forward）後自動把外掛本體對齊 lazy-lock.json。
+# 啟用方式（每台電腦執行一次）：git config core.hooksPath .githooks
+# 注意：git pull --rebase 不會觸發 post-merge，rebase 後請手動跑 restore。
+
+# 這次 pull 沒動到 lock 檔就不用跑
+if ! git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -qx 'lazy-lock.json'; then
+  exit 0
+fi
+
+command -v nvim >/dev/null 2>&1 || exit 0
+
+echo "[post-merge] lazy-lock.json 有變更，執行 Lazy restore 對齊外掛版本..."
+
+for i in 1 2; do
+  nvim --headless "+Lazy! restore" +qa
+  if git diff --quiet -- lazy-lock.json; then
+    echo "[post-merge] 外掛已對齊 lock 檔。"
+    exit 0
+  fi
+  # lock 檔被回寫 = 啟動當下仍載入舊版外掛規格（降級污染），還原後重跑一次
+  echo "[post-merge] lazy-lock.json 被 restore 回寫，還原 lock 檔後重試（第 $i 次）..."
+  git checkout -- lazy-lock.json
+done
+
+echo "[post-merge] 警告：重試後 lock 檔仍被回寫，請手動檢查，切勿直接 commit lazy-lock.json。"
+exit 0
