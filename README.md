@@ -7,19 +7,19 @@ LSP 補全與跳轉、存檔自動格式化、ESLint、偵錯（DAP）、測試�
 
 ### 1. 系統依賴
 
-| 工具 | 用途 | 安裝方式 |
-|---|---|---|
-| Neovim 0.11.2+ | LazyVim 16 的最低要求 | 官方套件或 PPA |
-| git、gcc | 外掛安裝、treesitter 編譯 | `sudo apt install git build-essential` |
-| Node.js / npm | 多數 LSP 是 npm 套件 | nvm |
-| Go | gopls、delve | 官方安裝包 |
-| PHP | intelephense、phpcs | `sudo apt install php` |
-| ripgrep | 全域搜尋（`<leader>/`） | `sudo apt install ripgrep` |
-| fzf | picker | `git clone https://github.com/junegunn/fzf ~/.fzf && ~/.fzf/install` |
-| fd | 檔案搜尋 | [官方 release](https://github.com/sharkdp/fd/releases) binary 放 `~/.local/bin/fd` |
-| lazygit | Git 介面（`<leader>gg`） | [官方 release](https://github.com/jesseduffield/lazygit/releases) binary 放 `~/.local/bin/lazygit` |
+| 工具            | 用途                                      | 安裝方式                                                                                                                                         |
+| --------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Neovim 0.11.2+  | LazyVim 16 的最低要求                     | 官方套件或 PPA                                                                                                                                   |
+| git、gcc        | 外掛安裝、treesitter 編譯                 | `sudo apt install git build-essential`                                                                                                           |
+| Node.js / npm   | 多數 LSP 是 npm 套件                      | nvm                                                                                                                                              |
+| Go              | gopls、delve                              | 官方安裝包                                                                                                                                       |
+| PHP             | intelephense、phpcs                       | `sudo apt install php`                                                                                                                           |
+| ripgrep         | 全域搜尋（`<leader>/`）                   | `sudo apt install ripgrep`                                                                                                                       |
+| fzf             | picker                                    | `git clone https://github.com/junegunn/fzf ~/.fzf && ~/.fzf/install`                                                                             |
+| fd              | 檔案搜尋                                  | [官方 release](https://github.com/sharkdp/fd/releases) binary 放 `~/.local/bin/fd`                                                               |
+| lazygit         | Git 介面（`<leader>gg`）                  | [官方 release](https://github.com/jesseduffield/lazygit/releases) binary 放 `~/.local/bin/lazygit`                                               |
 | tree-sitter CLI | nvim-treesitter（main branch）編譯 parser | [官方 release](https://github.com/tree-sitter/tree-sitter/releases) binary 放 `~/.local/bin/tree-sitter`（Mason 也會自動裝，網路慢時見常見問題） |
-| claude CLI | claudecode.nvim 依賴 | `npm install -g @anthropic-ai/claude-code` |
+| claude CLI      | claudecode.nvim 依賴                      | `npm install -g @anthropic-ai/claude-code`                                                                                                       |
 
 ### 2. 複製設定並啟動
 
@@ -38,7 +38,7 @@ Mason 工具（LSP、formatter、debug adapter）會在開啟對應檔案時自�
 Mason 預設會裝 3.x，但與現行 LazyVim 的 hybridMode 設定不相容，啟動會崩潰
 （`ts.server.protocol` undefined）。必須鎖定 2.2.10：
 
-```
+```vim
 :MasonInstall vue-language-server@2.2.10
 ```
 
@@ -137,12 +137,12 @@ diff 方向是升級而非降級。
 
 ## 已啟用的 extras（`lazyvim.json`）
 
-| 分類 | Extras |
-|---|---|
-| 語言 | php（intelephense）、vue、typescript（vtsls）、go、json、yaml、docker、markdown |
-| 格式化／檢查 | formatting.prettier、linting.eslint |
-| 偵錯／測試 | dap.core、test.core |
-| 編輯 | editor.inc-rename |
+| 分類         | Extras                                                                          |
+| ------------ | ------------------------------------------------------------------------------- |
+| 語言         | php（intelephense）、vue、typescript（vtsls）、go、json、yaml、docker、markdown |
+| 格式化／檢查 | formatting.prettier、linting.eslint                                             |
+| 偵錯／測試   | dap.core、test.core                                                             |
+| 編輯         | editor.inc-rename                                                               |
 
 自訂外掛（`lua/plugins/`）：
 
@@ -150,51 +150,10 @@ diff 方向是升級而非降級。
 - `claudecode.lua` — Claude Code 整合
 - `transparent.lua` — 背景透明
 
-## 常用按鍵
+## 快速鍵
 
-`<leader>` 為空格。
-
-| 按鍵 | 功能 |
-|---|---|
-| `<leader>e` | 檔案樹（neo-tree） |
-| `<leader><space>` | 快速開檔（VSCode 的 Ctrl+P） |
-| `<leader>/` | 全域搜尋（VSCode 的 Ctrl+Shift+F） |
-| `<leader>,` | 開啟中的 buffer 清單 |
-| `Shift+h` / `Shift+l` | 上一個／下一個 buffer |
-| `<leader>gg` | lazygit |
-| `<leader>cr` | 重新命名（即時預覽） |
-| `<leader>db` / `<leader>dc` | 中斷點／啟動偵錯 |
-| `<leader>tt` | 跑當前檔案測試 |
-| `Ctrl+b` | 視窗滿版 ⇄ 還原（自訂，取代預設翻頁；翻頁用 Ctrl+u） |
-| `sh` `sj` `sk` `sl` | 視窗間移動 |
-| `ss` / `sv` | 水平／垂直分割 |
-| `<leader>qq` | 離開 nvim（關閉全部視窗） |
-
-> `Ctrl+b` 為讓出全域綁定，已停用 noice（捲動 hover 文件）與
-> Neo-tree（scroll_preview）各自的 `Ctrl+b`（見 `lua/plugins/noice.lua`、`neo-tree.lua`）。
-
-### Claude Code（`<leader>a`）
-
-| 按鍵 | 功能 |
-|---|---|
-| `Alt+r` | 開／關 Claude 側欄（自訂，側欄內也可直接按，不用脫離終端機模式） |
-| `<leader>ac` | 開／關 Claude 側欄 |
-| `<leader>af` | 跳到 Claude 視窗 |
-| `<leader>ab` | 把目前檔案加入 context |
-| `<leader>as` | （visual）送選取範圍給 Claude |
-| `<leader>aa` / `<leader>ad` | 接受／拒絕 diff |
-| `<leader>ar` / `<leader>aC` | resume／continue 對話 |
-
-側欄是終端機模式：快速連按兩下 `Esc` 回 normal mode（單按會送給 Claude 當中斷），
-或按 `<C-w>h` 直接跳回編輯視窗。
-
-### PHP 偵錯流程
-
-1. `<leader>db` 下中斷點
-2. `<leader>dc` 選「Listen for Xdebug」
-3. 終端機執行 `XDEBUG_TRIGGER=1 php script.php`（網頁請求帶 `XDEBUG_SESSION` cookie）
-
-Go 偵錯不需額外設定，`<leader>dc` 直接可用（delve）。
+完整按鍵總表（自訂鍵、buffer／視窗／標籤頁的差別、LazyVim 內建常用鍵、
+測試與偵錯、PHP 偵錯流程）移到 **[KEYMAPS.md](KEYMAPS.md)**。
 
 ## 相關連結
 

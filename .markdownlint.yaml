@@ -1,0 +1,4 @@
+# 表格與程式碼區塊不檢查行長：中文表格與 CLI 指令無法拆行
+MD013:
+  tables: false
+  code_blocks: false
