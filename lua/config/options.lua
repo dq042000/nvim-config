@@ -7,6 +7,22 @@ vim.g.lazyvim_php_lsp = "intelephense" -- PHP LSP 使用 intelephense（預設�
 
 vim.opt.clipboard = "unnamedplus" -- 讓 Vim 使用系統剪貼簿（與系統剪貼簿同步）
 
+-- 系統剪貼簿需要外部工具，換機器時提醒安裝
+if vim.fn.has("linux") == 1 then
+  local ok = false
+  for _, tool in ipairs({ "xclip", "xsel", "wl-copy" }) do
+    if vim.fn.executable(tool) == 1 then
+      ok = true
+      break
+    end
+  end
+  if not ok then
+    vim.schedule(function()
+      vim.notify("找不到剪貼簿工具，複製無法同步到系統剪貼簿\n請安裝：sudo apt install xclip", vim.log.levels.WARN, { title = "clipboard" })
+    end)
+  end
+end
+
 -- 設定 Leader 鍵為空格
 vim.g.mapleader = " "
 
