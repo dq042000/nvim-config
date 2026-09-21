@@ -33,17 +33,20 @@ nvim
 
 Mason 工具（LSP、formatter、debug adapter）會在開啟對應檔案時自動安裝，可開 `:Mason` 查看進度。
 
-### 3. 手動降版 vue-language-server（必要）
+### 3. 確認 vue-language-server 為 3.x（必要）
 
-Mason 預設會裝 3.x，但與現行 LazyVim 的 hybridMode 設定不相容，啟動會崩潰
-（`ts.server.protocol` undefined）。必須鎖定 2.2.10：
+Vue LSP 必須與 LazyVim 的 vue extra 對齊。LazyVim 16.x 的 vue extra 改用
+`vue_ls` 搭配 vtsls 的 `@vue/typescript-plugin`，需要 vue-language-server 3.x。
+若 Mason 裝的仍是 2.x，`vue_ls` 會 initialize 失敗，只剩 vtsls 掛得上去：
 
 ```vim
-:MasonInstall vue-language-server@2.2.10
+:MasonInstall vue-language-server
 ```
 
-> 之後若 `:Lazy update` 更新 LazyVim 到支援 vue_ls 3.x 的版本，才可同步升級。
-> 在那之前不要手動 `:MasonInstall vue-language-server`（會裝回 3.x）。
+> 2026-09-21 以前這裡的規則是相反的：舊版 LazyVim 的 vue extra 用 2.x
+> hybridMode，必須鎖定 `vue-language-server@2.2.10`，裝 3.x 會崩潰
+> （`ts.server.protocol` undefined）。LazyVim 升到 16.0.1 後限制已解除。
+> 升級 LazyVim 大版本時，記得回頭確認這兩者是否仍然對齊。
 
 ### 4. PHP 偵錯：Xdebug（系統層）
 
@@ -163,7 +166,10 @@ diff 方向是升級而非降級。
 ## 常見問題
 
 - 相依套件安裝失敗：確認網路連線，或開 `:Lazy` / `:Mason` 手動重試。
-- Vue LSP 啟動就崩潰：vue-language-server 被升到 3.x 了，重跑步驟 3 降回 2.2.10。
+- Vue LSP 掛不上、開 `.vue` 只剩 vtsls，訊息是
+  `Cannot read properties of undefined (reading 'typescript')`：
+  vue-language-server 還停在 2.x，執行 `:MasonInstall vue-language-server`
+  升到 3.x（見步驟 3）。
 - 按 `Ctrl+b` 出現 `module 'snacks.zen' not found`：snacks.nvim 版本太舊
   （`zen` 模組是 2024-11 之後才加入的功能），執行 `:Lazy restore` 對齊 lock 檔即可。
 - 開檔噴 treesitter 的 `attempt to call method 'range'` 或
