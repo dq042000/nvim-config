@@ -99,6 +99,27 @@ git config core.hooksPath .githooks
 
 注意 `git pull --rebase` 不會觸發 post-merge，rebase 後請手動跑 restore。
 
+### Mason 工具不在同步範圍
+
+`lazy-lock.json` 只鎖 lazy 外掛。Mason 裝的 LSP、formatter、debug adapter
+放在 `~/.local/share/nvim/mason/`，不在本 repo 內，`git pull` 與
+`:Lazy restore` 都同步不到，各台電腦的版本可能不一樣。
+
+平常不必特別處理：缺少的 Mason 工具會在開啟對應檔案時自動安裝。但
+**LazyVim 有大版本變動時要手動檢查**，因為新版 extra 可能改用不同的
+LSP，或要求不同的大版本。
+
+實例：2026-09-21 這次 `:Lazy update` 把 LazyVim 帶到 16.0.1，vue extra
+改用 `vue_ls`，而 Mason 裡的 vue-language-server 仍是 2.2.10，開 `.vue`
+時 `vue_ls` 會 initialize 失敗。每台電腦都要跑一次：
+
+```vim
+:MasonInstall vue-language-server
+```
+
+確認方式：pull 後開一個平常在寫的檔案（`.php` / `.vue` / `.go`），
+用 `:LspInfo` 檢查該掛的 LSP 是否都掛上了。
+
 ### 沒跑 update，`lazy-lock.json` 卻出現大量變更？
 
 在外掛仍是舊版的電腦上開 nvim（例如 pull 後忘了 restore），lazy.nvim
