@@ -143,14 +143,46 @@ picker 視窗裡的操作：
 | `Alt+i`                      | 切換顯示被 `.gitignore` 忽略的檔案        |
 | `Alt+h`                      | 切換顯示隱藏檔（預設已顯示）              |
 | `F4`                         | 切換預覽視窗                              |
+| `F3`                         | 切換預覽視窗自動換行                      |
 | `Shift+↓`／`Shift+↑`         | 預覽視窗往下／往上捲一頁                  |
+| `Alt+Shift+↓`／`Alt+Shift+↑` | 預覽視窗往下／往上捲一行                  |
 | `Esc`                        | 關掉 picker                               |
 
 fzf-lua 的搜尋框和結果列表是同一個視窗，沒有 normal mode，
 所以 `Esc` 按一次就直接關掉，也不需要切換焦點。
 
+預覽區只能用上面那幾個鍵捲動，**游標跳不進去**。
+因為它是 fzf 這個終端機程式自己畫出來的文字，不是獨立的 Neovim 視窗。
+
 找不到 `.gitignore` 忽略的檔案（例如 `config/autoload/local.php`）時，
 在找檔案的視窗裡按 `Alt+i` 即可。
+
+## LazyVim 內建：看 git commit 歷史（`<leader>gl`）
+
+`<leader>gl` 開一個 commit 清單，右邊預覽該 commit 的 `git show`。
+`<leader>gc` 是同一個東西（LazyVim 保留的舊按鍵）。
+
+| 按鍵      | 功能                                              |
+| --------- | ------------------------------------------------- |
+| `Enter`   | **checkout 這個 commit**（不是開啟來看，小心）    |
+| `Ctrl+y`  | 複製 commit hash                                  |
+| `Ctrl+d`  | 列出這個 commit 改到的檔案，可逐一進去看 diff     |
+
+預覽區的捲動鍵與一般 picker 相同，見上一節。
+
+### `<leader>gL`：同樣看 commit，但預覽區進得去
+
+`<leader>gL` 也是 commit 歷史，但它用的是 Snacks picker，不是 fzf-lua。
+差別在於 **Snacks 的預覽區是真正的 Neovim 視窗，游標跳得進去**。
+
+| 按鍵    | 功能                                         |
+| ------- | -------------------------------------------- |
+| `Alt+w` | 焦點循環：搜尋框 → 清單 → 預覽區             |
+| `i`     | 從清單或預覽區跳回搜尋框                     |
+| `q`     | 關掉（在搜尋框裡用 `Esc`）                   |
+| `Enter` | **checkout 這個 commit**（和 `gl` 一樣，小心）|
+
+想用一般的 vim 操作翻 diff 時用 `<leader>gL`，只是掃一眼就用 `<leader>gl`。
 
 ## LazyVim 內建：看錯誤與警告（診斷）
 
