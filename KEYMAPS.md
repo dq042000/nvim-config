@@ -276,6 +276,19 @@ bufferline 檔名旁的紅色圖示代表該檔有 LSP 回報的錯誤，黃點�
 | `<leader>xx`  | Trouble 清單：所有開啟檔案的診斷（再按一次關） |
 | `<leader>sd`  | 用 picker 搜尋診斷訊息，可打字篩選            |
 
+## Markdown 預覽
+
+| 按鍵         | 功能                                            |
+| ------------ | ----------------------------------------------- |
+| `<leader>cp` | 在瀏覽器開／關 markdown 即時預覽（限 `.md` 檔） |
+
+`.md` 檔在 buffer 裡會由 render-markdown.nvim 自動美化（標題、清單、程式碼區塊），
+游標所在那一行會還原成原始語法方便編輯，不需按任何鍵。
+
+`<leader>cp` 另外開瀏覽器做即時預覽，在 nvim 打字瀏覽器會同步更新；
+對應指令為 `:MarkdownPreview` 與 `:MarkdownPreviewStop`。
+第一次按沒反應時，執行 `:Lazy build markdown-preview.nvim` 補裝。
+
 ## LazyVim 內建：測試（neotest，`<leader>t`）
 
 | 按鍵         | 功能                            |
