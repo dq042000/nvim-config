@@ -79,7 +79,7 @@
 側欄是終端機模式：快速連按兩下 `Esc` 回 normal mode（單按會被送給 Claude 當中斷），
 或按 `Ctrl+w` `h` 直接跳回編輯視窗。
 
-## LazyVim 內建：檔案、搜尋、Git
+## LazyVim 內建：檔案與編輯
 
 | 按鍵                  | 功能                                   |
 | --------------------- | -------------------------------------- |
@@ -89,10 +89,11 @@
 | `<leader>,`           | 開啟中的 buffer 清單                   |
 | `Shift+h` / `Shift+l` | 上一個／下一個 buffer                  |
 | `<leader>bd`          | 關閉目前 buffer                        |
-| `<leader>gg`          | lazygit                                |
 | `<leader>cr`          | 重新命名符號（即時預覽，inc-rename）   |
 | `<leader>ca`          | code action                            |
 | `<leader>qq`          | 離開 nvim（關閉全部視窗）              |
+
+git 相關的按鍵全部集中在下面的「Git」那一節。
 
 ## LazyVim 內建：搜尋與開檔（picker）
 
@@ -157,32 +158,96 @@ fzf-lua 的搜尋框和結果列表是同一個視窗，沒有 normal mode，
 找不到 `.gitignore` 忽略的檔案（例如 `config/autoload/local.php`）時，
 在找檔案的視窗裡按 `Alt+i` 即可。
 
-## LazyVim 內建：看 git commit 歷史（`<leader>gl`）
+## Git（所有 git 按鍵集中在這裡）
 
-`<leader>gl` 開一個 commit 清單，右邊預覽該 commit 的 `git show`。
-`<leader>gc` 是同一個東西（LazyVim 保留的舊按鍵）。
+`<leader>g` 開頭的都是 git。按 `<leader>g` 不放，which-key 會列出來。
 
-| 按鍵      | 功能                                              |
-| --------- | ------------------------------------------------- |
-| `Enter`   | **checkout 這個 commit**（不是開啟來看，小心）    |
-| `Ctrl+y`  | 複製 commit hash                                  |
-| `Ctrl+d`  | 列出這個 commit 改到的檔案，可逐一進去看 diff     |
+### 開工具
 
-預覽區的捲動鍵與一般 picker 相同，見上一節。
+| 按鍵         | 功能                                    |
+| ------------ | --------------------------------------- |
+| `<leader>gg` | lazygit（專案根目錄，最常用）           |
+| `<leader>gG` | lazygit（目前工作目錄）                 |
+| `<leader>ge` | 用檔案樹列出有改動的檔案（neo-tree）    |
 
-### `<leader>gL`：同樣看 commit，但預覽區進得去
+### 看目前的改動
 
-`<leader>gL` 也是 commit 歷史，但它用的是 Snacks picker，不是 fzf-lua。
-差別在於 **Snacks 的預覽區是真正的 Neovim 視窗，游標跳得進去**。
+| 按鍵         | 功能                                  |
+| ------------ | ------------------------------------- |
+| `<leader>gs` | 改動檔案清單，右邊看 diff             |
+| `<leader>gd` | 改動檔案清單，另一種排版              |
+| `<leader>gS` | stash 清單                            |
 
-| 按鍵    | 功能                                         |
-| ------- | -------------------------------------------- |
-| `Alt+w` | 焦點循環：搜尋框 → 清單 → 預覽區             |
-| `i`     | 從清單或預覽區跳回搜尋框                     |
-| `q`     | 關掉（在搜尋框裡用 `Esc`）                   |
-| `Enter` | **checkout 這個 commit**（和 `gl` 一樣，小心）|
+在 `<leader>gs` 的清單裡，`→` 是 stage、`←` 是 unstage、`Ctrl+x` 是丟棄改動。
 
-想用一般的 vim 操作翻 diff 時用 `<leader>gL`，只是掃一眼就用 `<leader>gl`。
+### 看歷史
+
+| 按鍵                        | 功能                                   |
+| --------------------------- | -------------------------------------- |
+| `<leader>gl`（＝`<leader>gc`）| 整個 repo 的 commit 歷史（fzf-lua）  |
+| `<leader>gL`                | 同上，但改用 Snacks picker             |
+| `<leader>gf`                | 只看目前這個檔案的 commit 歷史         |
+| `<leader>gb`                | 游標這一行是哪個 commit 改的（blame）  |
+
+`<leader>gl` 和 `<leader>gL` 開的東西一樣，差在用哪一套 picker：
+
+| | `<leader>gl` | `<leader>gL` |
+| --- | --- | --- |
+| 工具 | fzf-lua | Snacks picker |
+| 預覽區能不能把游標移進去 | 不能，只能捲 | **可以**，按 `Alt+w` |
+
+想用一般的 vim 操作翻 diff 就用 `<leader>gL`，只是掃一眼就用 `<leader>gl`。
+
+`<leader>gl` 清單裡的操作：
+
+| 按鍵     | 功能                                          |
+| -------- | --------------------------------------------- |
+| `Enter`  | **checkout 這個 commit**（不是開啟來看，小心）|
+| `Ctrl+y` | 複製 commit hash                              |
+| `Ctrl+d` | 列出這個 commit 改到的檔案，可逐一看 diff     |
+
+`<leader>gL` 清單裡的操作：
+
+| 按鍵    | 功能                                           |
+| ------- | ---------------------------------------------- |
+| `Alt+w` | 焦點循環：搜尋框 → 清單 → 預覽區               |
+| `i`     | 從清單或預覽區跳回搜尋框                       |
+| `q`     | 關掉（在搜尋框裡用 `Esc`）                     |
+| `Enter` | **checkout 這個 commit**（和 `gl` 一樣，小心） |
+
+預覽區的捲動鍵兩邊都跟一般 picker 相同，見上一節。
+
+### 改動區塊（hunk，gitsigns）
+
+這組鍵只在 git repo 裡的檔案有效，左邊那條彩色直線就是改動標記。
+
+| 按鍵                   | 功能                                 |
+| ---------------------- | ------------------------------------ |
+| `]h`／`[h`             | 跳到下一個／上一個改動               |
+| `]H`／`[H`             | 跳到最後一個／第一個改動             |
+| `<leader>ghp`          | 就地展開這塊改動的 diff              |
+| `<leader>ghs`          | stage 這塊改動（visual 可只選幾行）  |
+| `<leader>ghr`          | 還原這塊改動（visual 可只選幾行）    |
+| `<leader>ghS`          | stage 整個檔案                       |
+| `<leader>ghR`          | 還原整個檔案                         |
+| `<leader>ghu`          | 取消上一次的 stage                   |
+| `<leader>ghb`          | 這一行的完整 blame（含 commit 訊息） |
+| `<leader>ghB`          | 整個檔案的 blame                     |
+| `<leader>ghd`          | 開分割視窗和 index 比對              |
+| `<leader>ghD`          | 開分割視窗和上一個 commit 比對       |
+| `ih`                   | 把一塊改動當成選取範圍（如 `dih`）   |
+
+行尾那串灰字是誰在什麼時候改了這行，由 `lua/plugins/gitsigns.lua` 打開的
+current_line_blame 顯示。
+
+### 在瀏覽器上開
+
+| 按鍵         | 功能                                    |
+| ------------ | --------------------------------------- |
+| `<leader>gB` | 在瀏覽器開啟這行對應的 GitLab／GitHub   |
+| `<leader>gY` | 只複製網址，不開瀏覽器                  |
+
+兩個鍵在 visual 模式下會帶上選取的行號範圍。
 
 ## LazyVim 內建：看錯誤與警告（診斷）
 
